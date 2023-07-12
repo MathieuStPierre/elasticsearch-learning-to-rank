@@ -23,14 +23,15 @@ import com.o19s.es.ltr.ranker.normalizer.MinMaxFeatureNormalizer;
 import com.o19s.es.ltr.ranker.normalizer.StandardFeatureNormalizer;
 import com.o19s.es.ltr.ranker.parser.LtrRankerParserFactory;
 import org.apache.lucene.util.BytesRef;
-import org.apache.lucene.tests.util.LuceneTestCase;
-import org.elasticsearch.TransportVersion;
+import org.apache.lucene.util.LuceneTestCase;
+import org.elasticsearch.Version;
 import org.elasticsearch.common.ParsingException;
 import org.elasticsearch.common.Randomness;
 import org.elasticsearch.common.Strings;
 import org.elasticsearch.common.io.stream.ByteBufferStreamInput;
 import org.elasticsearch.common.io.stream.BytesStreamOutput;
 import org.elasticsearch.common.io.stream.StreamInput;
+import org.elasticsearch.common.xcontent.LoggingDeprecationHandler;
 import org.elasticsearch.xcontent.ToXContent;
 import org.elasticsearch.xcontent.XContentBuilder;
 import org.elasticsearch.xcontent.XContentFactory;
@@ -40,7 +41,7 @@ import org.elasticsearch.xcontent.XContentType;
 import java.io.IOException;
 import java.util.Base64;
 
-import static org.elasticsearch.xcontent.XContentParserConfiguration.EMPTY;
+import static org.elasticsearch.xcontent.NamedXContentRegistry.EMPTY;
 import static org.elasticsearch.xcontent.json.JsonXContent.jsonXContent;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -291,7 +292,7 @@ public class StoredLtrModelParserTests extends LuceneTestCase {
                 "            \"maximum\": 1.25}}}}";
 
         XContentParser xContent = jsonXContent.createParser(EMPTY,
-                modelDefnJson);
+                LoggingDeprecationHandler.INSTANCE, modelDefnJson);
         StoredLtrModel.LtrModelDefinition modelDef = StoredLtrModel.LtrModelDefinition.parse(xContent, null);
 
         BytesStreamOutput out = new BytesStreamOutput();
@@ -319,7 +320,7 @@ public class StoredLtrModelParserTests extends LuceneTestCase {
         String base64Encoded = "C21vZGVsL2R1bW15EmNvbXBsZXRlbHkgaWdub3JlZAE=";
         byte[] bytes = Base64.getDecoder().decode(base64Encoded);
         StreamInput input = ByteBufferStreamInput.wrap(bytes, 0, bytes.length);
-        input.setTransportVersion(TransportVersion.V_7_6_0);
+        input.setVersion(Version.V_7_6_0);
 
         StoredLtrModel.LtrModelDefinition modelUnserialized = new StoredLtrModel.LtrModelDefinition(input);
         assertEquals(modelUnserialized.getDefinition(), "completely ignored");
@@ -431,6 +432,6 @@ public class StoredLtrModelParserTests extends LuceneTestCase {
 
     private StoredLtrModel parse(String jsonString, String name) throws IOException {
         return StoredLtrModel.parse(jsonXContent.createParser(EMPTY,
-                jsonString), name);
+                LoggingDeprecationHandler.INSTANCE, jsonString), name);
     }
 }

@@ -22,6 +22,7 @@ import com.o19s.es.ltr.action.ClearCachesAction.ClearCachesNodesResponse;
 import com.o19s.es.ltr.feature.store.index.Caches;
 import org.elasticsearch.action.FailedNodeException;
 import org.elasticsearch.action.support.ActionFilters;
+import org.elasticsearch.action.support.nodes.BaseNodeRequest;
 import org.elasticsearch.action.support.nodes.TransportNodesAction;
 import org.elasticsearch.cluster.metadata.IndexNameExpressionResolver;
 import org.elasticsearch.cluster.node.DiscoveryNode;
@@ -30,9 +31,7 @@ import org.elasticsearch.common.inject.Inject;
 import org.elasticsearch.common.io.stream.StreamInput;
 import org.elasticsearch.common.io.stream.StreamOutput;
 import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.tasks.Task;
 import org.elasticsearch.threadpool.ThreadPool;
-import org.elasticsearch.transport.TransportRequest;
 import org.elasticsearch.transport.TransportService;
 
 import java.io.IOException;
@@ -69,7 +68,7 @@ public class TransportClearCachesAction extends TransportNodesAction<ClearCaches
     }
 
     @Override
-    protected ClearCachesNodeResponse nodeOperation(ClearCachesNodeRequest request, Task task) {
+    protected ClearCachesNodeResponse nodeOperation(ClearCachesNodeRequest request) {
         ClearCachesNodesRequest r = request.request;
         switch (r.getOperation()) {
         case ClearStore:
@@ -90,7 +89,7 @@ public class TransportClearCachesAction extends TransportNodesAction<ClearCaches
         return new ClearCachesNodeResponse(clusterService.localNode());
     }
 
-    public static class ClearCachesNodeRequest extends TransportRequest {
+    public static class ClearCachesNodeRequest extends BaseNodeRequest {
         private ClearCachesNodesRequest request;
 
         public ClearCachesNodeRequest() {}

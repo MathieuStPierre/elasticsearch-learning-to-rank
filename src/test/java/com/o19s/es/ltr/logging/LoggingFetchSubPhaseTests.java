@@ -42,18 +42,17 @@ import org.apache.lucene.search.SimpleCollector;
 import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.Weight;
 import org.apache.lucene.store.Directory;
-import org.apache.lucene.tests.util.LuceneTestCase;
-import org.apache.lucene.tests.util.TestUtil;
+import org.apache.lucene.util.LuceneTestCase;
+import org.apache.lucene.util.TestUtil;
 import org.elasticsearch.core.Tuple;
 import org.elasticsearch.common.lucene.search.function.CombineFunction;
 import org.elasticsearch.common.lucene.search.function.FieldValueFactorFunction;
 import org.elasticsearch.common.lucene.search.function.FunctionScoreQuery;
-import org.elasticsearch.index.fielddata.plain.SortedDoublesIndexFieldData;
-import org.elasticsearch.search.aggregations.support.CoreValuesSourceType;
+import org.elasticsearch.common.text.Text;
+import org.elasticsearch.index.fielddata.plain.SortedNumericIndexFieldData;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.fetch.FetchSubPhase;
 import org.elasticsearch.search.fetch.FetchSubPhaseProcessor;
-import org.elasticsearch.search.lookup.Source;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 
@@ -181,10 +180,12 @@ public class LoggingFetchSubPhaseTests extends LuceneTestCase {
                     String id = d.get("id");
                     SearchHit hit = new SearchHit(
                         doc,
-                        id
+                        id,
+                        new Text("text"),
+                        random().nextBoolean() ? new HashMap<>() : null,
+                        null
                     );
-                    Source source = null;
-                    processor.process(new FetchSubPhase.HitContext(hit, context, doc, Map.of(), source));
+                    processor.process(new FetchSubPhase.HitContext(hit, context, doc));
                     hits.add(hit);
                 }
             }
@@ -215,11 +216,7 @@ public class LoggingFetchSubPhaseTests extends LuceneTestCase {
 
     public Query buildFunctionScore() {
         FieldValueFactorFunction fieldValueFactorFunction = new FieldValueFactorFunction("score", FACTOR, LN2P, 0D,
-                new SortedDoublesIndexFieldData(
-                    "score",
-                     FLOAT,
-                     CoreValuesSourceType.NUMERIC,
-                     (dv, n) -> { throw new UnsupportedOperationException(); }));
+                new SortedNumericIndexFieldData("score", FLOAT));
         return new FunctionScoreQuery(new MatchAllDocsQuery(),
                 fieldValueFactorFunction, CombineFunction.MULTIPLY, 0F, Float.MAX_VALUE);
     }

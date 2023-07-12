@@ -22,6 +22,7 @@ import com.o19s.es.ltr.action.CachesStatsAction.CachesStatsNodesResponse;
 import com.o19s.es.ltr.feature.store.index.Caches;
 import org.elasticsearch.action.FailedNodeException;
 import org.elasticsearch.action.support.ActionFilters;
+import org.elasticsearch.action.support.nodes.BaseNodeRequest;
 import org.elasticsearch.action.support.nodes.TransportNodesAction;
 import org.elasticsearch.cluster.metadata.IndexNameExpressionResolver;
 import org.elasticsearch.cluster.node.DiscoveryNode;
@@ -30,9 +31,7 @@ import org.elasticsearch.common.inject.Inject;
 import org.elasticsearch.common.io.stream.StreamInput;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.threadpool.ThreadPool;
-import org.elasticsearch.transport.TransportRequest;
 import org.elasticsearch.transport.TransportService;
-import org.elasticsearch.tasks.Task;
 
 import java.io.IOException;
 import java.util.List;
@@ -69,11 +68,11 @@ public class TransportCacheStatsAction extends TransportNodesAction<CachesStatsN
     }
 
     @Override
-    protected CachesStatsNodeResponse nodeOperation(CachesStatsNodeRequest request, Task task) {
+    protected CachesStatsNodeResponse nodeOperation(CachesStatsNodeRequest request) {
         return new CachesStatsNodeResponse(clusterService.localNode()).initFromCaches(caches);
     }
 
-    public static class CachesStatsNodeRequest extends TransportRequest {
+    public static class CachesStatsNodeRequest extends BaseNodeRequest {
         public CachesStatsNodeRequest() {}
 
         public CachesStatsNodeRequest(StreamInput in) throws IOException {

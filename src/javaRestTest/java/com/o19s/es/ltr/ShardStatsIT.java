@@ -1,18 +1,13 @@
 package com.o19s.es.ltr;
 
-import com.o19s.es.TestExpressionsPlugin;
 import com.o19s.es.explore.ExplorerQueryBuilder;
 import com.o19s.es.termstat.TermStatQueryBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.TermQueryBuilder;
-import org.elasticsearch.plugins.Plugin;
 import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.test.ESIntegTestCase;
-
-import java.util.Arrays;
-import java.util.Collection;
 
 import static org.elasticsearch.test.hamcrest.ElasticsearchAssertions.assertSearchResponse;
 import static org.hamcrest.Matchers.equalTo;
@@ -22,18 +17,13 @@ import static org.hamcrest.Matchers.equalTo;
  */
 public class ShardStatsIT extends ESIntegTestCase {
     @Override
-    protected Collection<Class<? extends Plugin>> nodePlugins() {
-        return Arrays.asList(LtrQueryParserPlugin.class, TestExpressionsPlugin.class);
-    }
-
-    @Override
     protected int numberOfShards() {
         return 2;
     }
 
     protected void createIdx() {
         prepareCreate("idx")
-                .setMapping( "type=text");
+                .addMapping("type", "s", "type=text");
 
         for (int i = 0; i < 4; i++) {
             indexDoc(i);
@@ -42,7 +32,7 @@ public class ShardStatsIT extends ESIntegTestCase {
     }
 
     protected void indexDoc(int id) {
-        client().prepareIndex("idx")
+        client().prepareIndex("idx", "type", Integer.toString(id))
                 .setRouting( ((id % 2) == 0 ) ? "a" : "b" )
                 .setSource("s", "zzz").get();
     }

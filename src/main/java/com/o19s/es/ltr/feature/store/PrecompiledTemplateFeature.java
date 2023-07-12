@@ -25,6 +25,7 @@ import org.apache.lucene.search.Query;
 import org.apache.lucene.util.Accountable;
 import org.apache.lucene.util.RamUsageEstimator;
 import org.elasticsearch.common.ParsingException;
+import org.elasticsearch.common.xcontent.LoggingDeprecationHandler;
 import org.elasticsearch.xcontent.XContentFactory;
 import org.elasticsearch.xcontent.XContentParser;
 import org.elasticsearch.index.query.QueryBuilder;
@@ -40,7 +41,7 @@ import java.util.stream.Collectors;
 import static org.apache.lucene.util.RamUsageEstimator.NUM_BYTES_ARRAY_HEADER;
 import static org.apache.lucene.util.RamUsageEstimator.NUM_BYTES_OBJECT_HEADER;
 import static org.apache.lucene.util.RamUsageEstimator.NUM_BYTES_OBJECT_REF;
-import static org.elasticsearch.index.query.AbstractQueryBuilder.parseTopLevelQuery;
+import static org.elasticsearch.index.query.AbstractQueryBuilder.parseInnerQueryBuilder;
 
 public class PrecompiledTemplateFeature implements Feature, Accountable {
     private static final long BASE_RAM_USED = RamUsageEstimator.shallowSizeOfInstance(StoredFeature.class);
@@ -92,8 +93,9 @@ public class PrecompiledTemplateFeature implements Feature, Accountable {
         String query = MustacheUtils.execute(template, params);
         try {
             XContentParser parser = XContentFactory.xContent(query)
-                    .createParser(context.getSearchExecutionContext().getParserConfig(), query);
-            QueryBuilder queryBuilder = parseTopLevelQuery(parser);
+                    .createParser(context.getSearchExecutionContext().getXContentRegistry(),
+                            LoggingDeprecationHandler.INSTANCE, query);
+            QueryBuilder queryBuilder = parseInnerQueryBuilder(parser);
             // XXX: QueryShardContext extends QueryRewriteContext (for now)
             return Rewriteable.rewrite(queryBuilder, context.getSearchExecutionContext()).toQuery(context.getSearchExecutionContext());
         } catch (IOException | ParsingException | IllegalArgumentException e) {

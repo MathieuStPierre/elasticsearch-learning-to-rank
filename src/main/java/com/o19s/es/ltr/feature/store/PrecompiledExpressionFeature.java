@@ -25,9 +25,7 @@ import org.apache.lucene.expressions.Expression;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.util.Accountable;
 import org.apache.lucene.util.RamUsageEstimator;
-import org.elasticsearch.script.DoubleValuesScript;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -47,32 +45,28 @@ public class PrecompiledExpressionFeature implements Feature, Accountable {
     private static final long BASE_RAM_USED = RamUsageEstimator.shallowSizeOfInstance(PrecompiledExpressionFeature.class);
 
     private final String name;
-    private final DoubleValuesScript expression;
+    private final Expression expression;
     private final Set<String> expressionVariables;
     private final Collection<String> queryParams;
 
-    private PrecompiledExpressionFeature(String name, DoubleValuesScript expression, Collection<String> queryParams) {
+    private PrecompiledExpressionFeature(String name, Expression expression, Collection<String> queryParams) {
         this.name = name;
         this.expression = expression;
         this.queryParams = queryParams;
-        this.expressionVariables = new HashSet<>(Arrays.asList(this.expression.variables()));
+        this.expressionVariables = new HashSet<>(Arrays.asList(this.expression.variables));
     }
 
     public static PrecompiledExpressionFeature compile(StoredFeature feature) {
         assert TEMPLATE_LANGUAGE.equals(feature.templateLanguage());
-        try {
-            DoubleValuesScript expr = Scripting.compile(feature.template());
-            return new PrecompiledExpressionFeature(feature.name(), expr, feature.queryParams());
-        } catch (IOException ex) {
-            return null; // TODO: Cleaner exception handling
-        }
+        Expression expr = (Expression) Scripting.compile(feature.template());
+        return new PrecompiledExpressionFeature(feature.name(), expr, feature.queryParams());
     }
 
     @Override
     public long ramBytesUsed() {
         return BASE_RAM_USED +
                 (Character.BYTES * name.length()) + NUM_BYTES_ARRAY_HEADER +
-                (((Character.BYTES * expression.sourceText().length()) + NUM_BYTES_ARRAY_HEADER) * 2);
+                (((Character.BYTES * expression.sourceText.length()) + NUM_BYTES_ARRAY_HEADER) * 2);
     }
 
     @Override
@@ -144,7 +138,7 @@ public class PrecompiledExpressionFeature implements Feature, Accountable {
 
     @Override
     public void validate(FeatureSet set) {
-        for (String var : expression.variables()) {
+        for (String var : expression.variables) {
             if (!set.hasFeature(var) && !queryParams.contains(var)) {
                 throw new IllegalArgumentException("Derived feature [" + this.name + "] refers " +
                         "to unknown feature or parameter: [" + var + "]");

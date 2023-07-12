@@ -17,8 +17,6 @@
 package com.o19s.es.ltr.rest;
 
 import com.o19s.es.ltr.feature.store.index.IndexFeatureStore;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.elasticsearch.rest.BaseRestHandler;
 import org.elasticsearch.rest.RestRequest;
 
@@ -31,6 +29,4 @@ public abstract class FeatureStoreBaseRestHandler extends BaseRestHandler {
             return IndexFeatureStore.DEFAULT_STORE;
         }
     }
-
-    protected Logger logger = LogManager.getLogger(getClass());
 }

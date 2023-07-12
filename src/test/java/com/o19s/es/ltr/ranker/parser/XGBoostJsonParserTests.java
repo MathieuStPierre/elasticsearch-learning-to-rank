@@ -24,9 +24,9 @@ import com.o19s.es.ltr.ranker.DenseFeatureVector;
 import com.o19s.es.ltr.ranker.LtrRanker.FeatureVector;
 import com.o19s.es.ltr.ranker.dectree.NaiveAdditiveDecisionTree;
 import com.o19s.es.ltr.ranker.linear.LinearRankerTests;
-import org.apache.lucene.tests.util.LuceneTestCase;
+import org.apache.lucene.util.LuceneTestCase;
 import org.elasticsearch.common.ParsingException;
-import org.elasticsearch.common.io.Streams;
+import org.elasticsearch.core.internal.io.Streams;
 import org.hamcrest.CoreMatchers;
 
 import java.io.ByteArrayOutputStream;
@@ -275,10 +275,38 @@ public class XGBoostJsonParserTests extends LuceneTestCase {
         }
     }
 
+
+    public void testComplexModel_DS() throws Exception {
+        String model = readModel("/Users/mstpierre/Documents/RealtorSrc/ir.search.api/scripts/ltr/data/models/xgb_sample_all_features_ltr.json");
+        List<StoredFeature> features = new ArrayList<>();
+        List<String> names = Arrays.asList("all_near_match",
+                "category",
+                "heading",
+                "incoming_links",
+                "popularity_score",
+                "redirect_or_suggest_dismax",
+                "text_or_opening_text_dismax",
+                "title");
+        for (String n : names) {
+            features.add(LtrTestUtils.randomFeature(n));
+        }
+
+        StoredFeatureSet set = new StoredFeatureSet("set", features);
+        NaiveAdditiveDecisionTree tree = parser.parse(set, model);
+        DenseFeatureVector v = tree.newFeatureVector(null);
+        assertEquals(v.scores.length, features.size());
+
+        for (int i = random().nextInt(5000) + 1000; i > 0; i--) {
+            LinearRankerTests.fillRandomWeights(v.scores);
+            assertFalse(Float.isNaN(tree.score(v)));
+        }
+    }
+
+
     private String readModel(String model) throws IOException {
         try (InputStream is = this.getClass().getResourceAsStream(model)) {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            Streams.copy(is.readAllBytes(),  bos);
+            Streams.copy(is,  bos);
             return bos.toString(StandardCharsets.UTF_8.name());
         }
     }

@@ -18,9 +18,10 @@ package com.o19s.es.ltr.feature.store;
 
 import com.o19s.es.ltr.feature.FeatureSet;
 import com.o19s.es.ltr.query.DerivedExpressionQuery;
-import org.apache.lucene.tests.util.LuceneTestCase;
+import org.apache.lucene.util.LuceneTestCase;
 import org.elasticsearch.common.ParsingException;
 import org.elasticsearch.common.Strings;
+import org.elasticsearch.common.xcontent.LoggingDeprecationHandler;
 import org.elasticsearch.xcontent.ToXContent;
 import org.elasticsearch.xcontent.XContentBuilder;
 import org.elasticsearch.xcontent.XContentFactory;
@@ -36,9 +37,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
 
-import static org.apache.lucene.tests.util.TestUtil.randomRealisticUnicodeString;
-import static org.apache.lucene.tests.util.TestUtil.randomSimpleString;
-import static org.elasticsearch.xcontent.XContentParserConfiguration.EMPTY;
+import static org.apache.lucene.util.TestUtil.randomRealisticUnicodeString;
+import static org.apache.lucene.util.TestUtil.randomSimpleString;
+import static org.elasticsearch.xcontent.NamedXContentRegistry.EMPTY;
 import static org.elasticsearch.xcontent.json.JsonXContent.jsonXContent;
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.containsString;
@@ -213,12 +214,12 @@ public class StoredFeatureSetParserTests extends LuceneTestCase {
 
     private static StoredFeatureSet parse(String missingName) throws IOException {
         return StoredFeatureSet.parse(jsonXContent.createParser(EMPTY,
-                missingName));
+                LoggingDeprecationHandler.INSTANCE, missingName));
     }
 
     private static StoredFeatureSet parse(String missingName, String defaultName) throws IOException {
         return StoredFeatureSet.parse(jsonXContent.createParser(EMPTY,
-                missingName), defaultName);
+                LoggingDeprecationHandler.INSTANCE, missingName), defaultName);
     }
 
     public static StoredFeature buildRandomFeature() throws IOException {
@@ -287,7 +288,7 @@ public class StoredFeatureSetParserTests extends LuceneTestCase {
         while(nbFeat-->0) {
             String featureString = generateRandomFeature();
             StoredFeature feature = StoredFeature.parse(jsonXContent.createParser(EMPTY,
-                    featureString));
+                    LoggingDeprecationHandler.INSTANCE, featureString));
             if (!addedFeatures.add(feature.name())) {
                 continue;
             }

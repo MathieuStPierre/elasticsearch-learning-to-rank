@@ -51,7 +51,7 @@
         ltr.get_store:
             store: mystore
 
-  - match: { status: 404 }
+  - match: { exists: false }
 
 ---
 "Get cache stats":

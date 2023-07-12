@@ -25,14 +25,13 @@ import org.apache.lucene.index.Term;
 import org.apache.lucene.index.TermState;
 import org.apache.lucene.index.TermStates;
 import org.apache.lucene.index.TermsEnum;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.QueryVisitor;
-import org.apache.lucene.search.Weight;
+import org.apache.lucene.search.DocIdSetIterator;
+import org.apache.lucene.search.Explanation;
 import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreMode;
 import org.apache.lucene.search.Scorer;
-import org.apache.lucene.search.Explanation;
-import org.apache.lucene.search.DocIdSetIterator;
+import org.apache.lucene.search.Weight;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -63,6 +62,7 @@ public class PostingsExplorerQuery extends Query {
         return buffer.toString();
     }
 
+    @SuppressWarnings("EqualsWhichDoesntCheckParameterClass")
     @Override
     public boolean equals(Object obj) {
         return this.sameClassAs(obj)
@@ -117,6 +117,7 @@ public class PostingsExplorerQuery extends Query {
             this.type = type;
         }
 
+        @Override
         public void extractTerms(Set<Term> terms) {
             terms.add(term);
         }
@@ -242,13 +243,6 @@ public class PostingsExplorerQuery extends Query {
         @Override
         public float getMaxScore(int upTo) throws IOException {
             return Float.POSITIVE_INFINITY;
-        }
-    }
-
-    @Override
-    public void visit(QueryVisitor visitor) {
-        if (visitor.acceptField(this.term.field()) != false) {
-            visitor.consumeTerms(this, term);
         }
     }
 }

@@ -3,6 +3,7 @@ package com.o19s.es.termstat;
 import com.o19s.es.explore.StatisticsHelper;
 import com.o19s.es.explore.StatisticsHelper.AggrType;
 import org.apache.lucene.expressions.Bindings;
+import org.apache.lucene.expressions.Expression;
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.index.Term;
 
@@ -13,7 +14,6 @@ import org.apache.lucene.search.DoubleValuesSource;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.ScoreMode;
 import org.apache.lucene.search.Scorer;
-import org.elasticsearch.script.DoubleValuesScript;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -22,7 +22,7 @@ import java.util.Set;
 
 public class TermStatScorer extends Scorer {
     private final DocIdSetIterator iter;
-    private final DoubleValuesScript compiledExpression;
+    private final Expression compiledExpression;
 
     private AggrType aggr;
     private AggrType posAggr;
@@ -36,7 +36,7 @@ public class TermStatScorer extends Scorer {
     public TermStatScorer(TermStatQuery.TermStatWeight weight,
                           IndexSearcher searcher,
                           LeafReaderContext context,
-                          DoubleValuesScript compiledExpression,
+                          Expression compiledExpression,
                           Set<Term> terms,
                           ScoreMode scoreMode,
                           AggrType aggr,
@@ -98,9 +98,7 @@ public class TermStatScorer extends Scorer {
             termStatDict.put("unique", (float) terms.size());
 
             // Run the expression and store the result in computed
-            DoubleValuesSource dvSrc = compiledExpression.getDoubleValuesSource(
-                (name)-> DoubleValuesSource.constant(termStatDict.get(name))
-            );
+            DoubleValuesSource dvSrc = compiledExpression.getDoubleValuesSource(bindings);
             DoubleValues values = dvSrc.getValues(context, null);
 
             values.advanceExact(docID());

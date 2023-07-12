@@ -296,7 +296,7 @@ public class StoredLtrQueryIT extends BaseIntegrationTest {
 
     public void buildIndex() {
         client().admin().indices().prepareCreate("test_index").get();
-        client().prepareIndex("test_index")
+        client().prepareIndex("test_index", "test")
                 .setRefreshPolicy(WriteRequest.RefreshPolicy.IMMEDIATE)
                 .setSource("field1", "hello world", "field2", "bonjour world")
                 .get();
