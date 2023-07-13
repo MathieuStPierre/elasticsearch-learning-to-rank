@@ -16,6 +16,7 @@
 
 package com.o19s.es.ltr.ranker.parser;
 
+import com.fasterxml.jackson.core.JsonParser;
 import com.o19s.es.ltr.LtrTestUtils;
 import com.o19s.es.ltr.feature.FeatureSet;
 import com.o19s.es.ltr.feature.store.StoredFeature;
@@ -30,12 +31,19 @@ import org.elasticsearch.core.internal.io.Streams;
 import org.hamcrest.CoreMatchers;
 
 import java.io.ByteArrayOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+//import org.json.*;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import static com.o19s.es.ltr.LtrTestUtils.randomFeature;
 import static com.o19s.es.ltr.LtrTestUtils.randomFeatureSet;
@@ -277,29 +285,156 @@ public class XGBoostJsonParserTests extends LuceneTestCase {
 
 
     public void testComplexModel_DS() throws Exception {
-        String model = readModel("/Users/mstpierre/Documents/RealtorSrc/ir.search.api/scripts/ltr/data/models/xgb_sample_all_features_ltr.json");
+        JSONParser jsonParser = new JSONParser();
+        JSONObject jsonObject = null;
+
+        Object obj = jsonParser.parse(new FileReader("/Users/mstpierre/Documents/RealtorSrc/ir.search.api/scripts/ltr/data/models/xgb_sample_all_features_ltr.json"));
+        jsonObject = (JSONObject) obj;
+        JSONObject modelObj = (JSONObject)((JSONObject)jsonObject.get("model")).get("model");
+        String model = (String)modelObj.get("definition");
         List<StoredFeature> features = new ArrayList<>();
-        List<String> names = Arrays.asList("all_near_match",
-                "category",
-                "heading",
-                "incoming_links",
-                "popularity_score",
-                "redirect_or_suggest_dismax",
-                "text_or_opening_text_dismax",
-                "title");
+        List<String> names = Arrays.asList("baths",
+                "beds",
+                "sqft",
+                "lot_sqft",
+                "stories",
+                "photo_count",
+                "virtual_tour_count",
+                "garage_count",
+                "last_sold_price",
+                "price_increased",
+                "price_decreased",
+                "hoa_monthly_fee",
+                "listing_status_for_sale",
+                "listing_status_ready_to_build",
+                "listing_type_apartment",
+                "listing_type_condo_townhome_rowhome_coop",
+                "listing_type_duplex_triplex",
+                "listing_type_farms_ranches",
+                "listing_type_land",
+                "listing_type_mfd_mobile_home",
+                "listing_type_multi_family_home",
+                "listing_type_other",
+                "listing_type_single_family_home",
+                "days_on_market",
+                "flag_has_description",
+                "flag_has_matterport_tour",
+                "flag_is_coming_soon",
+                "flag_is_foreclosure",
+                "flag_is_garage_present",
+                "flag_is_new_construction",
+                "flag_is_zero_photos",
+                "flag_is_new_listing",
+                "flag_is_pending",
+                "flag_is_senior_community",
+                "flag_is_short_sale",
+                "clicks_7",
+                "clicks_14",
+                "clicks_28",
+                "views_7",
+                "views_14",
+                "views_28",
+                "wilson_ctr_7",
+                "wilson_ctr_14",
+                "wilson_ctr_28",
+                "list_price_current",
+                "price_per_sqft",
+                "property_age",
+                "clicks_7_14",
+                "clicks_14_28",
+                "clicks_7_28",
+                "views_7_14",
+                "views_14_28",
+                "views_7_28",
+                "wilson_ctr_7_14",
+                "wilson_ctr_14_28",
+                "wilson_ctr_7_28");
+
         for (String n : names) {
             features.add(LtrTestUtils.randomFeature(n));
         }
 
+        List<Double> values = Arrays.asList(4.0,
+                6.0,
+                2311.2139,
+                7000.0,
+                2.0,
+                10.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0,
+                125.0,
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1146.0,
+                2387.0,
+                4891.0,
+                58286.0,
+                119963.0,
+                244668.0,
+                0.018231925,
+                0.018883886,
+                0.01927325,
+                499000.0,
+                282.2954,
+                0.0,
+                0.48010054,
+                0.48803926,
+                0.23430791,
+                0.4858665,
+                0.49030933,
+                0.23822486,
+                0.96547526,
+                0.9797977,
+                0.9459705);
+
         StoredFeatureSet set = new StoredFeatureSet("set", features);
         NaiveAdditiveDecisionTree tree = parser.parse(set, model);
         DenseFeatureVector v = tree.newFeatureVector(null);
-        assertEquals(v.scores.length, features.size());
 
-        for (int i = random().nextInt(5000) + 1000; i > 0; i--) {
-            LinearRankerTests.fillRandomWeights(v.scores);
-            assertFalse(Float.isNaN(tree.score(v)));
+        for (int ind = 0; ind < values.size(); ind++) {
+            v.setFeatureScore(ind, values.get(ind).floatValue());
         }
+
+
+//        int i = 123456789;
+//        float f = (float)i;
+//        int i2 = (int)f;
+//        System.out.println("i: " + i + " i2: " + i2);
+
+        assertEquals(v.scores.length, features.size());
+        float score = tree.score(v);
+        System.out.println("Score: " + score);
+
+
+
+//        for (int i = random().nextInt(5000) + 1000; i > 0; i--) {
+//            LinearRankerTests.fillRandomWeights(v.scores);
+//            assertFalse(Float.isNaN(tree.score(v)));
+//        }
     }
 
 
