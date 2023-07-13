@@ -17,8 +17,6 @@ tmdb.json
 model.txt
 
 
-.idea/
-.gradle/
 build/
 out/
 *.swp
