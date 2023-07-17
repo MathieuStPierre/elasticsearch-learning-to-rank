@@ -24,6 +24,7 @@ import com.o19s.es.ltr.feature.store.StoredFeatureSet;
 import com.o19s.es.ltr.ranker.DenseFeatureVector;
 import com.o19s.es.ltr.ranker.LtrRanker.FeatureVector;
 import com.o19s.es.ltr.ranker.dectree.NaiveAdditiveDecisionTree;
+import com.o19s.es.ltr.ranker.dectree.NaiveAdditiveDecisionTreeDouble;
 import com.o19s.es.ltr.ranker.linear.LinearRankerTests;
 import org.apache.lucene.util.LuceneTestCase;
 import org.elasticsearch.common.ParsingException;
@@ -51,6 +52,7 @@ import static java.util.Collections.singletonList;
 
 public class XGBoostJsonParserTests extends LuceneTestCase {
     private final XGBoostJsonParser parser = new XGBoostJsonParser();
+
     public void testReadLeaf() throws IOException {
         String model = "[ {\"nodeid\": 0, \"leaf\": 0.234}]";
         FeatureSet set = randomFeatureSet();
@@ -412,7 +414,7 @@ public class XGBoostJsonParserTests extends LuceneTestCase {
                 0.9459705);
 
         StoredFeatureSet set = new StoredFeatureSet("set", features);
-        NaiveAdditiveDecisionTree tree = parser.parse(set, model);
+        NaiveAdditiveDecisionTreeDouble tree = (NaiveAdditiveDecisionTreeDouble) parser.parseDouble(set, model);
         DenseFeatureVector v = tree.newFeatureVector(null);
 
         for (int ind = 0; ind < values.size(); ind++) {

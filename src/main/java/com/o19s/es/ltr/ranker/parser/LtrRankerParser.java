@@ -33,5 +33,5 @@ public interface LtrRankerParser {
      */
     LtrRanker parse(FeatureSet set, String model);
 
-    LtrRanker parseDouble(FeatureSet set, String model);
+//    LtrRanker parseDouble(FeatureSet set, String model);
 }

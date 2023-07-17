@@ -63,22 +63,22 @@ public class XGBoostJsonParser implements LtrRankerParser {
         return new NaiveAdditiveDecisionTree(trees, weights, set.size(), modelDefinition.normalizer);
     }
 
-    @Override
-    public LtrRanker parseDouble(FeatureSet set, String model) {
-        XGBoostDefinition modelDefinition;
+
+    public NaiveAdditiveDecisionTreeDouble parseDouble(FeatureSet set, String model) {
+        XGBoostDefinitionDouble modelDefinition;
         try (XContentParser parser = JsonXContent.jsonXContent.createParser(NamedXContentRegistry.EMPTY,
                 LoggingDeprecationHandler.INSTANCE, model)
         ) {
-            modelDefinition = XGBoostDefinition.parse(parser, set);
+            modelDefinition = XGBoostDefinitionDouble.parse(parser, set);
         } catch (IOException e) {
             throw new IllegalArgumentException("Cannot parse model", e);
         }
 
-        Node[] trees = modelDefinition.getTrees(set);
-        float[] weights = new float[trees.length];
+        NodeDouble[] trees = modelDefinition.getTrees(set);
+        double[] weights = new double[trees.length];
         // Tree weights are already encoded in outputs
         Arrays.fill(weights, 1F);
-        return new NaiveAdditiveDecisionTree(trees, weights, set.size(), modelDefinition.normalizer);
+        return new NaiveAdditiveDecisionTreeDouble(trees, weights, set.size(), modelDefinition.normalizer);
     }
 
     private static class XGBoostDefinition {

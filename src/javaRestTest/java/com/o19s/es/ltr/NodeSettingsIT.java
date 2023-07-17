@@ -108,6 +108,11 @@ public class NodeSettingsIT extends BaseIntegrationTest {
         }
 
         @Override
+        public double scoreDouble(FeatureVector point) {
+            return 0;
+        }
+
+        @Override
         public long ramBytesUsed() {
             return ramUsed;
         }

@@ -42,7 +42,7 @@ public class LinearRankerParser implements LtrRankerParser {
         }
     }
 
-    @Override
+
     public LtrRanker parseDouble(FeatureSet set, String model) {
         return null;
     }
