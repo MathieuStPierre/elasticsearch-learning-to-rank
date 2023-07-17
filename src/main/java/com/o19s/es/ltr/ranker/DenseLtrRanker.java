@@ -32,6 +32,16 @@ public abstract class DenseLtrRanker implements LtrRanker {
         return new DenseFeatureVector(size());
     }
 
+    public DenseFeatureVectorDouble newFeatureVectorDouble(FeatureVector reuse) {
+        if (reuse != null) {
+            assert reuse instanceof DenseFeatureVectorDouble;
+            DenseFeatureVectorDouble vector = (DenseFeatureVectorDouble) reuse;
+            vector.reset();
+            return vector;
+        }
+        return new DenseFeatureVectorDouble(size());
+    }
+
     @Override
     public float score(FeatureVector vector) {
         assert vector instanceof DenseFeatureVector;
