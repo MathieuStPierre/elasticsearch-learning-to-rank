@@ -50,7 +50,7 @@ public abstract class DenseLtrRanker implements LtrRanker {
 
     public double scoreDouble(FeatureVector vector) {
         assert vector instanceof DenseFeatureVectorDouble;
-        return this.scoreDouble((DenseFeatureVector) vector);
+        return this.score((DenseFeatureVectorDouble) vector);
     }
 
     protected abstract double score(DenseFeatureVectorDouble vector);
