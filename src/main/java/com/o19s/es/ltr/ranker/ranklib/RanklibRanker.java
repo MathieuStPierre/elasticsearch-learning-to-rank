@@ -71,4 +71,9 @@ public class RanklibRanker implements LtrRanker {
         assert point instanceof DenseProgramaticDataPoint;
         return (float) ranker.eval((DenseProgramaticDataPoint) point);
     }
+
+    @Override
+    public double scoreDouble(FeatureVector point) {
+        return 0;
+    }
 }

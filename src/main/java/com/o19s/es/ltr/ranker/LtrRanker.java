@@ -53,6 +53,11 @@ public interface LtrRanker {
      */
     float score(FeatureVector point);
 
+    double scoreDouble(FeatureVector point);
+
+
+
+//    double score(FeatureVector point) = {return ;};
     /**
      * A FeatureVector used to store individual feature scores
      */
@@ -65,6 +70,8 @@ public interface LtrRanker {
          */
         void setFeatureScore(int featureId, float score);
 
+        void setFeatureScore(int featureId, double score);
+
         /**
          * Retrieve the score for the given feature-id
          *
@@ -72,6 +79,8 @@ public interface LtrRanker {
          * @return the score computed for the given feature
          */
         float getFeatureScore(int featureId);
+
+        double getFeatureScoreDouble(int featureId);
 
     }
 }

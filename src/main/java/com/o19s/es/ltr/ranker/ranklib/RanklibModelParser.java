@@ -43,4 +43,9 @@ public class RanklibModelParser implements LtrRankerParser {
         }
         return new RanklibRanker(ranklibRanker, numFeatures);
     }
+
+    @Override
+    public LtrRanker parseDouble(FeatureSet set, String model) {
+        return null;
+    }
 }

@@ -34,6 +34,11 @@ public class NullRanker extends DenseLtrRanker {
     }
 
     @Override
+    protected double score(DenseFeatureVectorDouble vector) {
+        return 0;
+    }
+
+    @Override
     protected float score(DenseFeatureVector vector) {
         return 0F;
     }

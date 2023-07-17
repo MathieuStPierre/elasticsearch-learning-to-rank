@@ -20,7 +20,7 @@ package com.o19s.es.ltr.ranker;
  * A dense ranker base class to work with {@link DenseFeatureVector}
  * where missing feature scores are set to 0.
  */
-public abstract class DenseLtrRanker implements LtrRanker {
+public abstract class DenseLtrRankerDouble implements LtrRanker {
     @Override
     public DenseFeatureVector newFeatureVector(FeatureVector reuse) {
         if (reuse != null) {
@@ -39,13 +39,13 @@ public abstract class DenseLtrRanker implements LtrRanker {
     }
 
     public double scoreDouble(FeatureVector vector) {
-        assert vector instanceof DenseFeatureVectorDouble;
-        return this.scoreDouble((DenseFeatureVector) vector);
+        assert vector instanceof DenseFeatureVector;
+        return this.score((DenseFeatureVector) vector);
     }
 
-    protected abstract double score(DenseFeatureVectorDouble vector);
-
     protected abstract float score(DenseFeatureVector vector);
+
+    protected abstract float scoreDouble(DenseFeatureVector vector);
 
     /**
      * @return the number of features supported by this ranker

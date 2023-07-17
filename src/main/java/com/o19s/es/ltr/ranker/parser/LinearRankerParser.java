@@ -17,6 +17,7 @@
 package com.o19s.es.ltr.ranker.parser;
 
 import com.o19s.es.ltr.feature.FeatureSet;
+import com.o19s.es.ltr.ranker.LtrRanker;
 import com.o19s.es.ltr.ranker.linear.LinearRanker;
 import org.elasticsearch.common.ParsingException;
 import org.elasticsearch.common.xcontent.LoggingDeprecationHandler;
@@ -39,6 +40,11 @@ public class LinearRankerParser implements LtrRankerParser {
         } catch (IOException e) {
             throw new IllegalArgumentException(e.getMessage(), e);
         }
+    }
+
+    @Override
+    public LtrRanker parseDouble(FeatureSet set, String model) {
+        return null;
     }
 
     private LinearRanker parse(XContentParser parser, FeatureSet set) throws IOException {

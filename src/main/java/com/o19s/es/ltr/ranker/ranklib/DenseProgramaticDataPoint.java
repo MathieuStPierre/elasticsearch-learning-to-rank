@@ -63,9 +63,19 @@ public class DenseProgramaticDataPoint extends DataPoint implements LtrRanker.Fe
     }
 
     @Override
+    public void setFeatureScore(int featureId, double score) {
+
+    }
+
+    @Override
     public float getFeatureScore(int featureIdx) {
         // add 1 because RankLib features 1 based
         return this.getFeatureValue(featureIdx+1);
+    }
+
+    @Override
+    public double getFeatureScoreDouble(int featureId) {
+        return 0;
     }
 
     public void reset() {

@@ -32,4 +32,6 @@ public interface LtrRankerParser {
      * @return the {@link LtrRanker} parsed from the given model and feature-set
      */
     LtrRanker parse(FeatureSet set, String model);
+
+    LtrRanker parseDouble(FeatureSet set, String model);
 }

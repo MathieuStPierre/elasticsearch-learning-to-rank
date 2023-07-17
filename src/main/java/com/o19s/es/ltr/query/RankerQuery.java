@@ -465,6 +465,11 @@ public class RankerQuery extends Query {
         }
 
         @Override
+        public double scoreDouble(FeatureVector point) {
+            return 0;
+        }
+
+        @Override
         public boolean equals(Object o) {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;

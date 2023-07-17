@@ -21,39 +21,39 @@ import java.util.Arrays;
 /**
  * Simple array-backed feature vector
  */
-public class DenseFeatureVector implements LtrRanker.FeatureVector {
-    public final float[] scores;
+public class DenseFeatureVectorDouble implements LtrRanker.FeatureVector {
+    public final double[] scores;
 
     /**
      * New simple array-backed datapoint
      *
      * @param size size of the internal array
      */
-    public DenseFeatureVector(int size) {
-        this.scores = new float[size];
+    public DenseFeatureVectorDouble(int size) {
+        this.scores = new double[size];
     }
 
     @Override
-    public void setFeatureScore(int featureIdx, float score) {
+    public void setFeatureScore(int featureIdx, double score) {
         scores[featureIdx] = score;
     }
 
     @Override
-    public void setFeatureScore(int featureId, double score) {
-
+    public float getFeatureScore(int featureId) {
+        return 0;
     }
 
     @Override
-    public float getFeatureScore(int featureIdx) {
-        return scores[featureIdx];
+    public void setFeatureScore(int featureIdx, float score) {
+        assert(false);
     }
 
     @Override
     public double getFeatureScoreDouble(int featureId) {
-        return 0;
+        return scores[featureId];
     }
 
     public void reset() {
-        Arrays.fill(scores, 0F);
+        Arrays.fill(scores, 0D);
     }
 }

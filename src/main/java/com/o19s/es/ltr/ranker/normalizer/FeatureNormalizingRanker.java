@@ -49,6 +49,11 @@ public class FeatureNormalizingRanker implements LtrRanker, Accountable {
     }
 
     @Override
+    public double scoreDouble(FeatureVector point) {
+        return 0;
+    }
+
+    @Override
     public boolean equals(Object other) {
         if (other == null) return false;
         if (!(other instanceof  FeatureNormalizingRanker)) {

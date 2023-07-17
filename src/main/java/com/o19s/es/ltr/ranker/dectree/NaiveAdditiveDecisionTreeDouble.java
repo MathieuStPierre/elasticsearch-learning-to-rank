@@ -29,11 +29,11 @@ import java.util.Objects;
  * Naive implementation of additive decision tree.
  * May be slow when the number of trees and tree complexity if high comparatively to the number of features.
  */
-public class NaiveAdditiveDecisionTree extends DenseLtrRanker implements Accountable {
-    private static final long BASE_RAM_USED = RamUsageEstimator.shallowSizeOfInstance(Split.class);
+public class NaiveAdditiveDecisionTreeDouble extends DenseLtrRanker implements Accountable {
+    private static final long BASE_RAM_USED = RamUsageEstimator.shallowSizeOfInstance(SplitDouble.class);
 
-    private final Node[] trees;
-    private final float[] weights;
+    private final NodeDouble[] trees;
+    private final double[] weights;
     private final int modelSize;
     private final Normalizer normalizer;
 
@@ -47,7 +47,7 @@ public class NaiveAdditiveDecisionTree extends DenseLtrRanker implements Account
      * @param modelSize the modelSize in number of feature used
      * @param normalizer class to perform any normalization on model score
      */
-    public NaiveAdditiveDecisionTree(Node[] trees, float[] weights, int modelSize, Normalizer normalizer) {
+    public NaiveAdditiveDecisionTreeDouble(NodeDouble[] trees, double[] weights, int modelSize, Normalizer normalizer) {
         assert trees.length == weights.length;
         this.trees = trees;
         this.weights = weights;
@@ -61,18 +61,20 @@ public class NaiveAdditiveDecisionTree extends DenseLtrRanker implements Account
     }
 
     @Override
-    protected double score(DenseFeatureVectorDouble vector) {
-        return 0;
+    protected float score(DenseFeatureVector vector) {
+        assert(false);
+       return 0; 
     }
 
     @Override
-    protected float score(DenseFeatureVector vector) {
-        float sum = 0;
-        float[] scores = vector.scores;
+    protected double score(DenseFeatureVectorDouble vector) {
+        double sum = 0;
+        double[] scores = vector.scores;
         for (int i = 0; i < trees.length; i++) {
             sum += weights[i]*trees[i].eval(scores);
         }
-        return normalizer.normalize(sum);
+        return sum;
+//        return normalizer.normalize(sum);
     }
 
     @Override
@@ -94,14 +96,19 @@ public class NaiveAdditiveDecisionTree extends DenseLtrRanker implements Account
          float eval(float[] scores);
     }
 
-    public static class Split implements Node {
-        private static final long BASE_RAM_USED = RamUsageEstimator.shallowSizeOfInstance(Split.class);
-        private final Node left;
-        private final Node right;
-        private final int feature;
-        private final float threshold;
+    public interface NodeDouble extends Accountable {
+        boolean isLeaf();
+        double eval(double[] scores);
+    }
 
-        public Split(Node left, Node right, int feature, float threshold) {
+    public static class SplitDouble implements NodeDouble {
+        private static final long BASE_RAM_USED = RamUsageEstimator.shallowSizeOfInstance(SplitDouble.class);
+        private final NodeDouble left;
+        private final NodeDouble right;
+        private final int feature;
+        private final double threshold;
+
+        public SplitDouble(NodeDouble left, NodeDouble right, int feature, double threshold) {
             this.left = Objects.requireNonNull(left);
             this.right = Objects.requireNonNull(right);
             this.feature = feature;
@@ -114,18 +121,18 @@ public class NaiveAdditiveDecisionTree extends DenseLtrRanker implements Account
         }
 
         @Override
-        public float eval(float[] scores) {
-            Node n = this;
+        public double eval(double[] scores) {
+            NodeDouble n = this;
             while (!n.isLeaf()) {
-                assert n instanceof Split;
-                Split s = (Split) n;
+                assert n instanceof SplitDouble;
+                SplitDouble s = (SplitDouble) n;
                 if (s.threshold > scores[s.feature]) {
                     n = s.left;
                 } else {
                     n = s.right;
                 }
             }
-            assert n instanceof Leaf;
+            assert n instanceof LeafDouble;
             return n.eval(scores);
         }
 
@@ -138,12 +145,12 @@ public class NaiveAdditiveDecisionTree extends DenseLtrRanker implements Account
         }
     }
 
-    public static class Leaf implements Node {
-        private static final long BASE_RAM_USED = RamUsageEstimator.shallowSizeOfInstance(Split.class);
+    public static class LeafDouble implements NodeDouble {
+        private static final long BASE_RAM_USED = RamUsageEstimator.shallowSizeOfInstance(LeafDouble.class);
 
-        private final float output;
+        private final double output;
 
-        public Leaf(float output) {
+        public LeafDouble(double output) {
             this.output = output;
         }
 
@@ -153,7 +160,7 @@ public class NaiveAdditiveDecisionTree extends DenseLtrRanker implements Account
         }
 
         @Override
-        public float eval(float[] scores) {
+        public double eval(double[] scores) {
             return output;
         }
 

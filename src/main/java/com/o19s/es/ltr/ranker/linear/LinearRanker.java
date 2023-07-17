@@ -17,6 +17,7 @@
 package com.o19s.es.ltr.ranker.linear;
 
 import com.o19s.es.ltr.ranker.DenseFeatureVector;
+import com.o19s.es.ltr.ranker.DenseFeatureVectorDouble;
 import com.o19s.es.ltr.ranker.DenseLtrRanker;
 import org.apache.lucene.util.Accountable;
 import org.apache.lucene.util.RamUsageEstimator;
@@ -38,6 +39,11 @@ public class LinearRanker extends DenseLtrRanker implements Accountable {
     @Override
     public String name() {
         return "linear";
+    }
+
+    @Override
+    protected double score(DenseFeatureVectorDouble vector) {
+        return 0;
     }
 
     @Override

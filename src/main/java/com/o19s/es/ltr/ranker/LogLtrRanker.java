@@ -57,6 +57,11 @@ public class LogLtrRanker implements LtrRanker {
         return ranker.score(((VectorWrapper) point).inner);
     }
 
+    @Override
+    public double scoreDouble(FeatureVector point) {
+        return 0;
+    }
+
     private static class VectorWrapper implements FeatureVector {
         private FeatureVector inner;
         private final LogConsumer logger;
@@ -72,8 +77,18 @@ public class LogLtrRanker implements LtrRanker {
         }
 
         @Override
+        public void setFeatureScore(int featureId, double score) {
+
+        }
+
+        @Override
         public float getFeatureScore(int featureId) {
             return inner.getFeatureScore(featureId);
+        }
+
+        @Override
+        public double getFeatureScoreDouble(int featureId) {
+            return 0;
         }
 
         void reset(LtrRanker ranker) {

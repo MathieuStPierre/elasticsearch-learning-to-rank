@@ -29,10 +29,12 @@ allprojects {
     implementation "org.ow2.asm:asm-tree:${ow2Version}"
     implementation 'com.o19s:RankyMcRankFace:0.1.1'
     implementation "com.github.spullara.mustache.java:compiler:0.9.3"
+    implementation "com.googlecode.json-simple:json-simple:1.1.1"
 
     runtimeOnly 'org.locationtech.spatial4j:spatial4j:0.7'
     runtimeOnly 'org.locationtech.jts:jts-core:1.15.0'
     runtimeOnly 'org.apache.logging.log4j:log4j-core:2.17.1'
+    runtimeOnly 'com.googlecode.json-simple:json-simple:1.1.1'
   }
 }
 
