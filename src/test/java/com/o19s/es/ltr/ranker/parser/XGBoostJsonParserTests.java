@@ -592,13 +592,17 @@ public class XGBoostJsonParserTests extends LuceneTestCase {
 
 
     public void testAllData_DS_double() throws Exception {
+
+        String modelFilename = "/Users/mstpierre/Documents/RealtorSrc/ir.search.api/scripts/ltr/data/models/mst_all_features_25_trees_ltr.json";
+        //String modelFilename = "/Users/mstpierre/Documents/RealtorSrc/ir.search.api/scripts/ltr/data/models/xgb_sample_all_features_ltr.json";
+//        String outFeaturesFilename = "/Users/mstpierre/Documents/RealtorSrc/ir.search.api/scripts/ltr/data/esDatasets/inventoryXGBoost5000_prod_features_double.json";
+        String outFeaturesFilename = "/Users/mstpierre/Documents/RealtorSrc/ir.search.api/scripts/ltr/data/esDatasets/inventoryXGBoost5000_prod_features_double_25_trees.json";
+
         JSONParser jsonParser = new JSONParser();
         JSONObject jsonObject = null;
 
-        Object obj = jsonParser.parse(new FileReader("/Users/mstpierre/Documents/RealtorSrc/ir.search.api/scripts/ltr/data/models/xgb_sample_all_features_ltr.json"));
+        Object obj = jsonParser.parse(new FileReader(modelFilename));
         jsonObject = (JSONObject) obj;
-
-
 
         JSONObject modelObj = (JSONObject)((JSONObject)jsonObject.get("model")).get("model");
         String model = (String)modelObj.get("definition");
@@ -691,12 +695,16 @@ public class XGBoostJsonParserTests extends LuceneTestCase {
             }
 
             assertEquals(v.scores.length, features.size());
+            if (((JSONObject)hit).get("_id").toString().equalsIgnoreCase("P4998492190|L2946988308")) {
+                int i = 0;
+                i = i;
+            }
             double score = tree.scoreDouble(v);
             ((JSONObject)hit).put("_score", score);
             System.out.println("Score: " + score);
         }
 
-        FileWriter fw = new FileWriter("/Users/mstpierre/Documents/RealtorSrc/ir.search.api/scripts/ltr/data/esDatasets/inventoryXGBoost5000_prod_features_double.json");
+        FileWriter fw = new FileWriter(outFeaturesFilename);
         fw.write(featuresAndDocs.toString());
         fw.close();
 
