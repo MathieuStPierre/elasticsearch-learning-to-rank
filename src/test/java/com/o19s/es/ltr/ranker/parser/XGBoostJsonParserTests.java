@@ -593,10 +593,14 @@ public class XGBoostJsonParserTests extends LuceneTestCase {
 
     public void testAllData_DS_double() throws Exception {
 
-        String modelFilename = "/Users/mstpierre/Documents/RealtorSrc/ir.search.api/scripts/ltr/data/models/mst_all_features_25_trees_ltr.json";
+//        String modelFilename = "/Users/mstpierre/Documents/RealtorSrc/ir.search.api/scripts/ltr/data/models/mst_all_features_2_trees_ltr.json";
+//        String modelFilename = "/Users/mstpierre/Documents/RealtorSrc/ir.search.api/scripts/ltr/data/models/mst_all_features_290_trees_normalize_ltr.json";
+        String modelFilename = "/Users/mstpierre/Documents/RealtorSrc/ir.search.api/scripts/ltr/data/models/mst_all_features_290_trees_ltr.json";
         //String modelFilename = "/Users/mstpierre/Documents/RealtorSrc/ir.search.api/scripts/ltr/data/models/xgb_sample_all_features_ltr.json";
 //        String outFeaturesFilename = "/Users/mstpierre/Documents/RealtorSrc/ir.search.api/scripts/ltr/data/esDatasets/inventoryXGBoost5000_prod_features_double.json";
-        String outFeaturesFilename = "/Users/mstpierre/Documents/RealtorSrc/ir.search.api/scripts/ltr/data/esDatasets/inventoryXGBoost5000_prod_features_double_25_trees.json";
+//        String outFeaturesFilename = "/Users/mstpierre/Documents/RealtorSrc/ir.search.api/scripts/ltr/data/esDatasets/inventoryXGBoost5000_prod_features_double_2_trees.json";
+//        String outFeaturesFilename = "/Users/mstpierre/Documents/RealtorSrc/ir.search.api/scripts/ltr/data/esDatasets/inventoryXGBoost5000_prod_features_double_290_trees_normalize.json";
+        String outFeaturesFilename = "/Users/mstpierre/Documents/RealtorSrc/ir.search.api/scripts/ltr/data/esDatasets/inventoryXGBoost5000_prod_features_double_290_trees.json";
 
         JSONParser jsonParser = new JSONParser();
         JSONObject jsonObject = null;
